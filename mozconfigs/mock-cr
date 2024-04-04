@@ -1,0 +1,1 @@
+ac_add_options MOZ_CRASHREPORTER_MOCK=1
