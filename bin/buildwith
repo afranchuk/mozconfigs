@@ -24,6 +24,10 @@ MOZCONFIG_CONTENT+="MOZBUILD=$HOME/.mozbuild"
 MOZCONFIG_CONTENT+="$NEWLINE"
 MOZCONFIG_CONTENT+="MOZCONFIGS=$MOZCONFIGS"
 MOZCONFIG_CONTENT+="$NEWLINE"
+MOZCONFIG_CONTENT+="OBJDIR=$CHECKOUT/obj"
+MOZCONFIG_CONTENT+="$NEWLINE"
+MOZCONFIG_CONTENT+="add_objdir () {$NEWLINE  OBJDIR=\"\${OBJDIR}-\$1\"$NEWLINE}"
+MOZCONFIG_CONTENT+="$NEWLINE"
 MOZCONFIG_CONTENT+="mk_add_options AUTOCLOBBER=1"
 MOZCONFIG_CONTENT+="$NEWLINE"
 
@@ -42,14 +46,13 @@ for modifier in $MODIFIERS compile-environment; do
     exit 1
   fi
   if [ "$modifier" != "compile-environment" ]; then
-    IDENTIFIER+="-$modifier"
+    IDENTIFIER+="+$modifier"
   fi
   MOZCONFIG_CONTENT+=$(cat "$MOZCONFIGS/$modifier")
   MOZCONFIG_CONTENT+="$NEWLINE"
 done
 
-OBJDIR="$CHECKOUT/obj$IDENTIFIER"
-MOZCONFIG_CONTENT+="mk_add_options MOZ_OBJDIR=$OBJDIR"
+MOZCONFIG_CONTENT+="mk_add_options MOZ_OBJDIR=\$OBJDIR"
 echo "$MOZCONFIG_CONTENT" > "$CHECKOUT/.mozconfig$IDENTIFIER"
 if [ -f "$CHECKOUT/.mozconfig" ]; then
   cat "$CHECKOUT/.mozconfig" > "$CHECKOUT/.mozconfig.bak"

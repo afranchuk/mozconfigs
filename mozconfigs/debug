@@ -1,1 +1,2 @@
 ac_add_options --enable-debug
+add_objdir debug

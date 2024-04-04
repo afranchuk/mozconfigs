@@ -1,2 +1,3 @@
 ac_add_options --enable-optimize
 export RUSTC_OPT_LEVEL=2
+add_objdir opt
