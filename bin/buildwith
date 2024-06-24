@@ -10,7 +10,21 @@ fi
 
 CHECKOUT="$(git rev-parse --show-toplevel 2>/dev/null || hg root)"
 
-MODIFIERS="$(printf '%s\n' "$@" | sort | tr '\n' ' ')"
+if [ $1 = "@" ]; then
+  shift
+  MODIFIERS="$(basename $(readlink .mozconfig || echo .mozconfig) | sed -ne 's/.mozconfig//p' | tr '+' ' ')"
+  for modifier in "$@"; do
+    if [[ $modifier == -* ]]; then
+      MODIFIERS="${MODIFIERS/${modifier:1}/}"
+    else
+      MODIFIERS+=" $modifier"
+    fi
+  done
+else
+  MODIFIERS="$@"
+fi
+
+MODIFIERS="$(printf '%s\n' $MODIFIERS | sort | tr '\n' ' ')"
 
 MOZCONFIGS="$(realpath $(dirname "$0")/../mozconfigs)"
 
