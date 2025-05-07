@@ -1,3 +1,4 @@
+# objdir osx
 ac_add_options --target=x86_64-apple-darwin
 
 CROSS_BUILD=1
@@ -26,5 +27,3 @@ export CXX="$HOST_CXX"
 # export MKFSHFS="$CROSS/hfsplus/newfs_hfs"
 # export DMG_TOOL="$CROSS/dmg/dmg"
 # export HFS_TOOL="$CROSS/dmg/hfsplus"
-
-add_objdir osx

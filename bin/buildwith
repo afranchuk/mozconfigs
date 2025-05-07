@@ -9,6 +9,7 @@ if [ $# -eq 0 ]; then
 fi
 
 CHECKOUT="$(git rev-parse --show-toplevel 2>/dev/null || hg root)"
+OBJDIR="$CHECKOUT/obj"
 
 if [ $1 = "@" ]; then
   shift
@@ -38,10 +39,6 @@ MOZCONFIG_CONTENT+="MOZBUILD=$HOME/.mozbuild"
 MOZCONFIG_CONTENT+="$NEWLINE"
 MOZCONFIG_CONTENT+="MOZCONFIGS=$MOZCONFIGS"
 MOZCONFIG_CONTENT+="$NEWLINE"
-MOZCONFIG_CONTENT+="OBJDIR=$CHECKOUT/obj"
-MOZCONFIG_CONTENT+="$NEWLINE"
-MOZCONFIG_CONTENT+="add_objdir () {$NEWLINE  OBJDIR=\"\${OBJDIR}-\$1\"$NEWLINE}"
-MOZCONFIG_CONTENT+="$NEWLINE"
 MOZCONFIG_CONTENT+="mk_add_options AUTOCLOBBER=1"
 MOZCONFIG_CONTENT+="$NEWLINE"
 
@@ -66,7 +63,7 @@ for modifier in $MODIFIERS compile-environment; do
   MOZCONFIG_CONTENT+="$NEWLINE"
 done
 
-MOZCONFIG_CONTENT+="mk_add_options MOZ_OBJDIR=\$OBJDIR"
+MOZCONFIG_CONTENT+="mk_add_options MOZ_OBJDIR=$OBJDIR"
 echo "$MOZCONFIG_CONTENT" > "$CHECKOUT/.mozconfig$IDENTIFIER"
 if [ -f "$CHECKOUT/.mozconfig" ]; then
   cat "$CHECKOUT/.mozconfig" > "$CHECKOUT/.mozconfig.bak"
@@ -76,3 +73,14 @@ fi
 ln -s "$CHECKOUT/.mozconfig$IDENTIFIER" "$CHECKOUT/.mozconfig"
 cat "$CHECKOUT/.mozconfig"
 # yes | "$CHECKOUT/mach" ide vscode --no-interactive
+
+# Set symbolic link for objdir
+join() {
+  local IFS=-
+  echo "$*"
+}
+OBJDIR_PARTS=$(rg '# objdir (.*)' -or '$1' $CHECKOUT/.mozconfig)
+OBJDIR_TARGET="$OBJDIR-$(join $OBJDIR_PARTS)"
+rm -f "$OBJDIR"
+mkdir -p "$OBJDIR_TARGET"
+ln -s "$(basename $OBJDIR_TARGET)" "$OBJDIR"

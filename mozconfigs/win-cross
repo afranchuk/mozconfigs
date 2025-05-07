@@ -1,3 +1,4 @@
+# objdir win
 CROSS_BUILD=1
 
 if [ -z "$TARGET" ]; then
@@ -7,4 +8,3 @@ else
 fi
 
 # For packaging, 7z needs to be on your PATH, or specified with export 7Z
-add_objdir win
